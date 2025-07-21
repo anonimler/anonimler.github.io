@@ -11,8 +11,23 @@
 <body>
   <header>
     <img src="/assets/icon.png" alt="Icon" class="icon" />
-    <h1 class="blog-title">Anonimler - Gizlilik, Özgürlük, Ücretsiz</h1>
+    <h1 class="blog-title">Anonimler - Gizli, Özgür, Ücretsiz bir internet için Türkçe rehber</h1>
+    <nav class="menu">
+      <a href="#" onclick="navigateTo('about')">Hakkımızda</a>
+      <a href="#" onclick="navigateTo('disclaimer')">Sorumluluk Reddi</a>
+    </nav>
   </header>
   <main id="posts"></main>
+  <script>
+    function navigateTo(page) {
+      fetch(`posts/${page}.md`)
+        .then(res => res.text())
+        .then(text => {
+          import('https://cdn.jsdelivr.net/npm/marked/marked.min.js').then(marked => {
+            document.getElementById('posts').innerHTML = `<article class='static-page'>${marked.marked.parse(text)}</article>`;
+          });
+        });
+    }
+  </script>
 </body>
 </html>
