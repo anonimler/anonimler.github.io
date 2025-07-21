@@ -1,10 +1,10 @@
 [
   {
-    "title": "Güvenlik Rehberi",
-    "file": "markdown-ornek.md",
-    "date": "2023-10-15",
-    "excerpt": "İnternette güvenliğinizi nasıl sağlarsınız?",
-    "tags": "güvenlik, temel"
+    "title": "gpg4win",
+    "file": "gpg4win.md",
+    "date": "2025 temmuz",
+    "excerpt": "Windowsa indirdigin programlarin sanal imzalarini kontrol edebilirsin.",
+    "tags": "windows, forensic, security"
   },
   {
     "title": "VPN Kullanımı",
