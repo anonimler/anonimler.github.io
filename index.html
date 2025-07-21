@@ -3,167 +3,84 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Anonimler - Gizli İnternet Rehberi</title>
+  <title>Anonimler</title>
   <link rel="stylesheet" href="style.css" />
-  <script type="module" src="main.js"></script>
-  <link rel="icon" href="assets/icon.png" />
-  <style>
-    /* GitHub Pages için ek stiller - mevcut CSS bozulmadan */
-    .tutorial-container {
-      max-width: 800px;
-      margin: 2rem auto;
-      padding: 1.5rem;
-      background: #2c2c2c;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-    }
-    
-    .tutorial-header {
-      color: #FFFFFF;
-      text-align: center;
-      margin-bottom: 1.5rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid #4a6fa5;
-    }
-    
-    .tutorial-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-    
-    .markdown-example, .html-result {
-      background: #3a3a3a;
-      padding: 15px;
-      border-radius: 8px;
-      font-size: 14px;
-    }
-    
-    .tutorial-title {
-      color: #4a6fa5;
-      margin-top: 0;
-    }
-    
-    pre {
-      background: #1a1a1a;
-      color: #f0f0f0;
-      padding: 15px;
-      border-radius: 6px;
-      overflow-x: auto;
-      line-height: 1.4;
-      font-size: 13px;
-    }
-    
-    code {
-      font-family: 'Courier New', monospace;
-      background: #1a1a1a;
-      padding: 2px 6px;
-      border-radius: 4px;
-    }
-    
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 20px 0;
-    }
-    
-    th, td {
-      padding: 10px;
-      text-align: left;
-      border: 1px solid #555;
-    }
-    
-    th {
-      background-color: #333;
-      color: #4a6fa5;
-    }
-    
-    .github-section {
-      background: #333;
-      padding: 20px;
-      border-radius: 8px;
-      margin-top: 30px;
-    }
-    
-    .github-section h3 {
-      color: #4a6fa5;
-      margin-top: 0;
-    }
-    
-    .back-button {
-      display: inline-block;
-      padding: 8px 16px;
-      background: #4a6fa5;
-      color: white;
-      text-decoration: none;
-      border-radius: 4px;
-      margin-top: 15px;
-      transition: background 0.3s;
-    }
-    
-    .back-button:hover {
-      background: #3a5a80;
-    }
-  </style>
+  <link rel="icon" href="/assets/icon.png" />
 </head>
 <body>
   <header>
-    <img src="assets/icon.png" alt="Icon" class="icon" />
+    <img src="/assets/icon.png" alt="Icon" class="icon" />
     <h1 class="blog-title">Anonimler</h1>
     <nav class="menu">
       <a href="#" onclick="navigateTo('about')">Hakkımızda</a>
       <a href="#" onclick="navigateTo('disclaimer')">Sorumluluk Reddi</a>
-      <a href="#" onclick="showMarkdownTutorial()">Markdown Rehberi</a>
     </nav>
   </header>
   <h3>Gizli, Özgür, Ücretsiz bir internet için Türkçe rehber</h3>
-  
-  <main id="posts"></main>
-  
-  <div id="markdown-tutorial" class="tutorial-container" style="display: none;">
-    <div class="tutorial-header">
-      <h2>Markdown Rehberi</h2>
-      <p>İşte blogunuz için içerik oluştururken kullanabileceğiniz Markdown kılavuzu:</p>
-    </div>
-    
-    <div class="tutorial-grid">
-      <div class="markdown-example">
-        <h3 class="tutorial-title">Markdown</h3>
-        <pre><code># Ana Başlık (H1)
+  <main id="posts">
+    <div id="blog-list"></div>
+  </main>
 
-## Alt Başlık (H2)
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    // Tüm blogları yükle
+    document.addEventListener('DOMContentLoaded', function() {
+      fetchBlogPosts();
+    });
 
-### Daha Küçük Başlık (H3)
+    async function fetchBlogPosts() {
+      try {
+        // GitHub Pages için posts klasöründeki dosyaları al
+        const response = await fetch('posts/list.json'); // Önce list.json oluşturmalısınız
+        const posts = await response.json();
+        
+        let html = '<h2>Blog Yazıları</h2><ul class="post-list">';
+        posts.forEach(post => {
+          html += `
+            <li>
+              <a href="#" onclick="loadPost('${post.file}')">${post.title}</a>
+              <small>${post.date}</small>
+            </li>
+          `;
+        });
+        html += '</ul>';
+        
+        document.getElementById('blog-list').innerHTML = html;
+      } catch (error) {
+        console.error('Blog yazıları yüklenirken hata oluştu:', error);
+        document.getElementById('blog-list').innerHTML = '<p>Blog yazıları yüklenirken bir hata oluştu.</p>';
+      }
+    }
 
-**Kalın metin** ya da __kalın metin__
+    function loadPost(postFile) {
+      fetch(`posts/${postFile}`)
+        .then(res => res.text())
+        .then(text => {
+          document.getElementById('blog-list').innerHTML = `
+            <article class='blog-post'>
+              ${marked.parse(text)}
+            </article>
+            <button onclick="fetchBlogPosts()">Geri</button>
+          `;
+        })
+        .catch(err => {
+          console.error('Yazı yüklenirken hata:', err);
+          document.getElementById('blog-list').innerHTML = '<p>Yazı yüklenirken bir hata oluştu.</p>';
+        });
+    }
 
-*İtalik metin* ya da _italik metin_
-
-~~Üstü çizili metin~~
-
-- Madde işaretli liste
-- İkinci madde
-  - Girintili madde
-
-1. Numaralı liste
-2. İkinci öğe
-
-[Bağlantı metni](https://ornek.com)
-
-![Resim açıklaması](resim-yolu.jpg)
-
-> Alıntı bloğu
-
-`Satır içi kod`
-
-```javascript
-// Kod bloğu
-function ornek() {
-  return "Merhaba Dünya";
-}
-        </code></pre>
-      </div>
-    </div>
-  </div>
+    function navigateTo(page) {
+      fetch(`posts/${page}.md`)
+        .then(res => res.text())
+        .then(text => {
+          document.getElementById('blog-list').innerHTML = `
+            <article class='static-page'>
+              ${marked.parse(text)}
+            </article>
+            <button onclick="fetchBlogPosts()">Geri</button>
+          `;
+        });
+    }
+  </script>
 </body>
 </html>
