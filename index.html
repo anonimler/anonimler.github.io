@@ -1,34 +1,164 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Anonimler</title>
+  <title>Anonimler - Gizli İnternet Rehberi</title>
   <link rel="stylesheet" href="style.css" />
   <script type="module" src="main.js"></script>
-  <link rel="icon" href="/assets/icon.png" />
+  <link rel="icon" href="assets/icon.png" />
+  <style>
+    /* GitHub Pages için ek stiller - mevcut CSS bozulmadan */
+    .tutorial-container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+      background: #2c2c2c;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    
+    .tutorial-header {
+      color: #FFFFFF;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #4a6fa5;
+    }
+    
+    .tutorial-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    
+    .markdown-example, .html-result {
+      background: #3a3a3a;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    
+    .tutorial-title {
+      color: #4a6fa5;
+      margin-top: 0;
+    }
+    
+    pre {
+      background: #1a1a1a;
+      color: #f0f0f0;
+      padding: 15px;
+      border-radius: 6px;
+      overflow-x: auto;
+      line-height: 1.4;
+      font-size: 13px;
+    }
+    
+    code {
+      font-family: 'Courier New', monospace;
+      background: #1a1a1a;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border: 1px solid #555;
+    }
+    
+    th {
+      background-color: #333;
+      color: #4a6fa5;
+    }
+    
+    .github-section {
+      background: #333;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 30px;
+    }
+    
+    .github-section h3 {
+      color: #4a6fa5;
+      margin-top: 0;
+    }
+    
+    .back-button {
+      display: inline-block;
+      padding: 8px 16px;
+      background: #4a6fa5;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      margin-top: 15px;
+      transition: background 0.3s;
+    }
+    
+    .back-button:hover {
+      background: #3a5a80;
+    }
+  </style>
 </head>
 <body>
   <header>
-    <img src="/assets/icon.png" alt="Icon" class="icon" />
+    <img src="assets/icon.png" alt="Icon" class="icon" />
     <h1 class="blog-title">Anonimler</h1>
     <nav class="menu">
       <a href="#" onclick="navigateTo('about')">Hakkımızda</a>
       <a href="#" onclick="navigateTo('disclaimer')">Sorumluluk Reddi</a>
+      <a href="#" onclick="showMarkdownTutorial()">Markdown Rehberi</a>
     </nav>
   </header>
   <h3>Gizli, Özgür, Ücretsiz bir internet için Türkçe rehber</h3>
+  
   <main id="posts"></main>
-  <script>
-    function navigateTo(page) {
-      fetch(`posts/${page}.md`)
-        .then(res => res.text())
-        .then(text => {
-          import('https://cdn.jsdelivr.net/npm/marked/marked.min.js').then(marked => {
-            document.getElementById('posts').innerHTML = `<article class='static-page'>${marked.marked.parse(text)}</article>`;
-          });
-        });
-    }
-  </script>
-</body>
-</html>
+  
+  <div id="markdown-tutorial" class="tutorial-container" style="display: none;">
+    <div class="tutorial-header">
+      <h2>Markdown Rehberi</h2>
+      <p>İşte blogunuz için içerik oluştururken kullanabileceğiniz Markdown kılavuzu:</p>
+    </div>
+    
+    <div class="tutorial-grid">
+      <div class="markdown-example">
+        <h3 class="tutorial-title">Markdown</h3>
+        <pre><code># Ana Başlık (H1)
+
+## Alt Başlık (H2)
+
+### Daha Küçük Başlık (H3)
+
+**Kalın metin** ya da __kalın metin__
+
+*İtalik metin* ya da _italik metin_
+
+~~Üstü çizili metin~~
+
+- Madde işaretli liste
+- İkinci madde
+  - Girintili madde
+
+1. Numaralı liste
+2. İkinci öğe
+
+[Bağlantı metni](https://ornek.com)
+
+![Resim açıklaması](resim-yolu.jpg)
+
+> Alıntı bloğu
+
+`Satır içi kod`
+
+```javascript
+// Kod bloğu
+function ornek() {
+  return "Merhaba Dünya";
+}
+        </code></pre>
