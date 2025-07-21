@@ -1,0 +1,68 @@
+/* style.css */
+
+@font-face {
+  font-family: 'OpenDyslexic';
+  src: url('/assets/OpenDyslexic-Regular.woff2') format('woff2');
+}
+
+:root {
+  --bg-color: #212121;
+  --text-color: #f5f5f5;
+  --accent-color: #64B5F6;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'OpenDyslexic', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+header {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--accent-color);
+}
+
+.icon {
+  width: 40px;
+  height: 40px;
+  margin-right: 1rem;
+}
+
+.blog-title {
+  font-size: 1.8rem;
+  color: var(--accent-color);
+}
+
+main {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.post {
+  background-color: #2c2c2c;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  transition: transform 0.2s ease;
+}
+
+.post:hover {
+  transform: scale(1.02);
+}
+
+.post img {
+  width: 100%;
+  height: auto;
+}
+
+.post-title {
+  padding: 0.5rem 1rem;
+  font-size: 1.2rem;
+  color: var(--accent-color);
+}
