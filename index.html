@@ -17,38 +17,68 @@
     </nav>
   </header>
   <h3>Gizli, Özgür, Ücretsiz bir internet için Türkçe rehber</h3>
-  <main id="posts">
+  <main id="content">
     <div id="blog-list"></div>
+    <div id="post-content" style="display:none;">
+      <button onclick="showBlogList()" class="back-button">← Tüm Yazılar</button>
+      <article id="post-article"></article>
+    </div>
   </main>
 
+  <!-- Marked.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  
+  <!-- Highlight.js (opsiyonel, syntax vurgulama için) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+
   <script>
-    // Tüm blogları yükle
-    document.addEventListener('DOMContentLoaded', function() {
-      fetchBlogPosts();
+    // Marked.js ayarları
+    marked.setOptions({
+      breaks: true,
+      gfm: true,
+      highlight: function(code, lang) {
+        if (lang && hljs.getLanguage(lang)) {
+          return hljs.highlight(lang, code).value;
+        }
+        return hljs.highlightAuto(code).value;
+      }
     });
+
+    // Sayfa yüklendiğinde blog listesini getir
+    document.addEventListener('DOMContentLoaded', fetchBlogPosts);
 
     async function fetchBlogPosts() {
       try {
-        // GitHub Pages için posts klasöründeki dosyaları al
-        const response = await fetch('posts/list.json'); // Önce list.json oluşturmalısınız
+        const response = await fetch('posts/index.json');
         const posts = await response.json();
         
-        let html = '<h2>Blog Yazıları</h2><ul class="post-list">';
+        let html = '<h2>Son Yazılar</h2><div class="post-grid">';
         posts.forEach(post => {
           html += `
-            <li>
-              <a href="#" onclick="loadPost('${post.file}')">${post.title}</a>
-              <small>${post.date}</small>
-            </li>
+            <div class="post-card" onclick="loadPost('${post.file}')">
+              <h3>${post.title}</h3>
+              <p class="post-excerpt">${post.excerpt || ''}</p>
+              <div class="post-meta">
+                <span class="post-date">${post.date}</span>
+                ${post.tags ? `<span class="post-tags">${post.tags.split(',').map(tag => `<span class="tag">${tag.trim()}</span>`).join('')}</span>` : ''}
+              </div>
+            </div>
           `;
         });
-        html += '</ul>';
+        html += '</div>';
         
         document.getElementById('blog-list').innerHTML = html;
+        document.getElementById('blog-list').style.display = 'block';
+        document.getElementById('post-content').style.display = 'none';
       } catch (error) {
-        console.error('Blog yazıları yüklenirken hata oluştu:', error);
-        document.getElementById('blog-list').innerHTML = '<p>Blog yazıları yüklenirken bir hata oluştu.</p>';
+        console.error('Hata:', error);
+        document.getElementById('blog-list').innerHTML = `
+          <div class="error">
+            <p>Yazılar yüklenirken bir hata oluştu.</p>
+            <button onclick="fetchBlogPosts()">Tekrar Dene</button>
+          </div>
+        `;
       }
     }
 
@@ -56,30 +86,32 @@
       fetch(`posts/${postFile}`)
         .then(res => res.text())
         .then(text => {
-          document.getElementById('blog-list').innerHTML = `
-            <article class='blog-post'>
-              ${marked.parse(text)}
-            </article>
-            <button onclick="fetchBlogPosts()">Geri</button>
-          `;
+          document.getElementById('post-article').innerHTML = marked.parse(text);
+          document.getElementById('blog-list').style.display = 'none';
+          document.getElementById('post-content').style.display = 'block';
+          
+          // Syntax vurgulama için
+          document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightElement(block);
+          });
         })
         .catch(err => {
-          console.error('Yazı yüklenirken hata:', err);
-          document.getElementById('blog-list').innerHTML = '<p>Yazı yüklenirken bir hata oluştu.</p>';
+          console.error('Hata:', err);
+          document.getElementById('post-article').innerHTML = `
+            <div class="error">
+              <p>Yazı yüklenirken bir hata oluştu.</p>
+              <button onclick="showBlogList()">Geri Dön</button>
+            </div>
+          `;
         });
     }
 
+    function showBlogList() {
+      fetchBlogPosts();
+    }
+
     function navigateTo(page) {
-      fetch(`posts/${page}.md`)
-        .then(res => res.text())
-        .then(text => {
-          document.getElementById('blog-list').innerHTML = `
-            <article class='static-page'>
-              ${marked.parse(text)}
-            </article>
-            <button onclick="fetchBlogPosts()">Geri</button>
-          `;
-        });
+      loadPost(`${page}.md`);
     }
   </script>
 </body>
